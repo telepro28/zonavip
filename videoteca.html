@@ -2,10 +2,16 @@
 <html>
 <head>
 
+<meta charset="UTF-8">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex,nofollow">
 
+<title>Player</title>
+
 <script src="https://ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
+<script>
+jwplayer.key="XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";
+</script>
 
 <style>
 body{
@@ -28,6 +34,7 @@ height:100%;
 
 <script>
 
+/* obtener parametro de la URL */
 function getParam(name){
 const url = new URL(window.location.href);
 return url.searchParams.get(name);
@@ -35,35 +42,25 @@ return url.searchParams.get(name);
 
 var canal = getParam("regional");
 
+/* si no hay canal */
+if(!canal){
+document.body.innerHTML="<h2 style='color:white;text-align:center;margin-top:40vh'>No se especificó canal</h2>";
+}
+
 /* URL del stream */
 var getURL = "https://nada-pi2z.onrender.com/play?regional=" + canal;
-
-/* opcional */
-var getKEY = "";
-var getKEY2 = "";
-var getIMG = "";
-
-var mt = '';
 
 var playerInstance = jwplayer("player");
 
 playerInstance.setup({
 
 playlist: [{
-title: "LUCHAMEDIA.ES",
-description: "Repeticion Gratis",
-image: getIMG,
+title: "Streaming",
+description: "Canal en vivo",
 
 sources: [{
-default: true,
-type: "hls",
-file: mt + getURL,
-
-drm: {
-clearkey: {"keyId": getKEY, "key": getKEY2}
-},
-
-label: "HD"
+file: getURL,
+type: "hls"
 }]
 
 }],
@@ -72,10 +69,9 @@ width: "100%",
 height: "100%",
 aspectratio: "16:9",
 autostart: true,
-cast: {}
+stretching: "exactfit"
 
 });
-
 
 /* control automático de calidad */
 
