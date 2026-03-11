@@ -2,15 +2,10 @@
 <html>
 <head>
 
-<title>no hay nada aqui</title>
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
 
-<meta content="noindex, nofollow, noarchive" name="robots"/>
-<meta name="referrer" content="no-referrer" />
-
-<script src="//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js"></script>
-<script>
-jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";
-</script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
 body{
@@ -18,10 +13,10 @@ margin:0;
 background:black;
 }
 
-#player{
-position:absolute;
+video{
 width:100%;
-height:100%;
+height:100vh;
+background:black;
 }
 </style>
 
@@ -29,33 +24,42 @@ height:100%;
 
 <body>
 
-<div id="player"></div>
+<video id="video" controls autoplay></video>
 
 <script>
 
-function getParameterByName(name){
-name = name.replace(/[\[\]]/g,"\\$&");
-var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
-var results = regex.exec(window.location.href);
-if(!results) return null;
-if(!results[2]) return '';
-return decodeURIComponent(results[2].replace(/\+/g," "));
+function getParam(name){
+const url = new URL(window.location.href);
+return url.searchParams.get(name);
 }
 
-var canal = getParameterByName('regional');
+var canal = getParam("regional");
 
 if(canal){
 
-var url = "https://nada-pi2z.onrender.com/play?regional=" + canal;
+var stream = "https://nada-pi2z.onrender.com/play?regional=" + canal;
 
-jwplayer("player").setup({
-file: url,
-autostart: true,
-width: "100%",
-height: "100%",
-aspectratio: "16:9",
-stretching: "exactfit"
+var video = document.getElementById("video");
+
+if(Hls.isSupported()){
+
+var hls = new Hls({
+maxBufferLength:30
 });
+
+hls.loadSource(stream);
+hls.attachMedia(video);
+
+hls.on(Hls.Events.MANIFEST_PARSED,function(){
+video.play();
+});
+
+}else if(video.canPlayType('application/vnd.apple.mpegurl')){
+
+video.src = stream;
+video.play();
+
+}
 
 }else{
 
